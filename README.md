@@ -10,6 +10,7 @@ Screenshot of the application: </p>
 
 ## Important Notes
 
+- setting hotkeys doesn't work yet sorry ( : 
 - This application requires Python 3.10 or higher.
 - It has only been tested on an older Mac and not on Apple Silicon.
 - If you're using a Mac, you may need to install the PortAudio library using Homebrew.
