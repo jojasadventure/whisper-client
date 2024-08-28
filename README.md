@@ -23,7 +23,7 @@ Screenshot of the application: </p>
 - Support for multiple languages (currently English and German, easily expandable)
 - Customizable hotkeys for recording and language switching
 - Quick language toggle between two preset languages
-- Prompt input to guide the transcription process
+- whisper model Prompt input (see whisper documentation; basically seed with up to 244 chars worth of own words, or writing / speaking style)
 - Control over prompt content for each transcription
 - Automatic copying to clipboard and optional pasting of transcriptions into the active window
 - Adjustable window size and position
