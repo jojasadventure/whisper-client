@@ -6,6 +6,79 @@ from ui_components import UIComponents
 from api_handler import APIHandler
 from emitter import Emitter
 from keyboard_handler import KeyboardHandler
+from config_handler import ConfigHandler
+
+class TranscriptionApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Whisper API Transcription App")
+        self.master.iconbitmap('assets/images/appIcon.ico')
+        self.master.geometry("400x700")  # Increased height to accommodate new elements
+        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        screen_width = self.master.winfo_screenwidth()
+        screen_height = self.master.winfo_screenheight()
+        x = (screen_width - 400) // 2
+        y = (screen_height - 700) // 2
+        self.master.geometry(f"400x700+{x}+{y}")
+
+        self.config = ConfigHandler()
+        self.api_url = self.config.get('API_URL', 'http://10.68.7.2:8000/v1/audio/transcriptions')
+        print(f"Debug: Loaded API URL from config: {self.api_url}")
+
+        self.ui = UIComponents(self.master, self)
+        self.ui.update_api_url_display(self.api_url)
+        self.api_handler = APIHandler(self.api_url)
+        self.emitter = Emitter()
+        self.recording_handler = RecordingHandler(self)
+        self.keyboard_handler = KeyboardHandler(self)
+
+        self.ui.paste_var.trace_add("write", self.update_paste_setting)
+        self.ui.update_api_url_display(self.api_url)
+
+        self.keyboard_handler.setup_listener()
+
+    def update_paste_setting(self, *args):
+        should_paste = self.ui.paste_var.get()
+        self.emitter.set_should_paste(should_paste)
+        print(f"Debug: Updated paste setting to {should_paste}")
+
+    def get_audio_devices(self):
+        return get_audio_devices()
+
+    def toggle_language(self):
+        if self.ui.language_var.get() == "en":
+            self.ui.language_var.set("de")
+            playsound('./assets/sounds/german_toggle.wav')
+        else:
+            self.ui.language_var.set("en")
+            playsound('./assets/sounds/english_toggle.wav')
+
+    def toggle_recording(self):
+        self.recording_handler.toggle_recording()
+
+    def toggle_pin(self):
+        is_pinned = self.master.attributes('-topmost')
+        self.master.attributes('-topmost', not is_pinned)
+        self.ui.update_pin_button(not is_pinned)
+        print(f"Debug: Window {'unpinned' if is_pinned else 'pinned'}")
+
+    def set_hotkeys(self):
+        self.keyboard_handler.update_hotkeys()
+        self.ui.update_hotkey_display()
+
+    def save_config(self):
+        self.config.set('API_URL', self.api_handler.api_url)
+        self.config.save_config()
+        print("Debug: Configuration saved")
+        self.ui.update_api_url_display(self.api_handler.api_url)
+
+    def on_close(self):
+        self.recording_handler.audio_handler.stop_recording()
+        if self.keyboard_handler.listener:
+            self.keyboard_handler.listener.stop()
+        self.master.destroy()
+        print("Debug: Application closed")
 
 class RecordingHandler:
     def __init__(self, app):
@@ -58,63 +131,3 @@ class RecordingHandler:
         except Exception as e:
             print(f"Debug: Error in process_audio: {e}")
             self.app.ui.update_loading_label(f"Error: {str(e)}", "red")
-
-class TranscriptionApp:
-    def __init__(self, master, api_url):
-        self.master = master
-        self.master.title("Whisper API Transcription App")
-        self.master.iconbitmap('assets/images/appIcon.ico')
-        self.master.geometry("400x650")
-        self.master.protocol("WM_DELETE_WINDOW", self.on_close)
-
-        screen_width = self.master.winfo_screenwidth()
-        screen_height = self.master.winfo_screenheight()
-        x = (screen_width - 400) // 2
-        y = (screen_height - 550) // 2
-        self.master.geometry(f"400x650+{x}+{y}")
-
-        self.ui = UIComponents(self.master, self)
-        self.api_handler = APIHandler(api_url)
-        self.emitter = Emitter()
-        self.recording_handler = RecordingHandler(self)
-        self.keyboard_handler = KeyboardHandler(self)
-
-        self.ui.paste_var.trace_add("write", self.update_paste_setting)
-
-        self.keyboard_handler.setup_listener()
-
-    def update_paste_setting(self, *args):
-        should_paste = self.ui.paste_var.get()
-        self.emitter.set_should_paste(should_paste)
-        print(f"Debug: Updated paste setting to {should_paste}")
-
-    def get_audio_devices(self):
-        return get_audio_devices()
-
-    def toggle_language(self):
-        if self.ui.language_var.get() == "en":
-            self.ui.language_var.set("de")
-            playsound('./assets/sounds/german_toggle.wav')
-        else:
-            self.ui.language_var.set("en")
-            playsound('./assets/sounds/english_toggle.wav')
-
-    def toggle_recording(self):
-        self.recording_handler.toggle_recording()
-
-    def toggle_pin(self):
-        is_pinned = self.master.attributes('-topmost')
-        self.master.attributes('-topmost', not is_pinned)
-        self.ui.update_pin_button(not is_pinned)
-        print(f"Debug: Window {'unpinned' if is_pinned else 'pinned'}")
-
-    def set_hotkeys(self):
-        self.keyboard_handler.update_hotkeys()
-        self.ui.update_hotkey_display()
-
-    def on_close(self):
-        self.recording_handler.audio_handler.stop_recording()
-        if self.keyboard_handler.listener:
-            self.keyboard_handler.listener.stop()
-        self.master.destroy()
-        print("Debug: Application closed")
