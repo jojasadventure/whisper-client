@@ -1,94 +1,79 @@
-# whisper-client
-Very simple Python based client for Whisper compatible endpoint
+# Whisper API Transcription App
 
-I made this to replace built in macOS transcription with a private whisper openai compatible endpoint i.e. https://github.com/fedirz/faster-whisper-server
+The Whisper API Transcription App is a Python-based desktop application that allows users to record audio, transcribe it using any OpenAI Whisper API endpoint (including self-hosted options), and automatically copy the transcription to the clipboard and paste it into the active window.
 
-It listens to a hotkey (CTRL CMD `) to toggle recording and will transcribe at the end (not streaming right now) and input keys to wherever window i am at the given moment when the transcription is ready. 
+## Important Notes
 
-NOTE  experimental!!! , will not work out of the box, needs assets, only tested on older mac os, will play havoc if you accidentally tab away while it's inputting characters
+- This application requires Python 3.10 or higher.
+- It has only been tested on an older Mac and not on Apple Silicon.
+- If you're using a Mac, you may need to install the PortAudio library using Homebrew.
+- This application is provided as-is, without any warranty or liability. Use at your own risk.
+- There is no official support for this application.
 
+## Features
 
-# status 26-08-24
+- Real-time audio recording and transcription
+- Support for multiple languages (currently English and German, easily expandable)
+- Customizable hotkeys for recording and language switching
+- Quick language toggle between two preset languages
+- Prompt input to guide the transcription process
+- Control over prompt content for each transcription
+- Automatic copying to clipboard and optional pasting of transcriptions into the active window
+- Adjustable window size and position
+- Graceful handling of application closing and errors
+- Customizable activation, deactivation, and toggle sounds
 
-# TranscriptionApp Project Status Report
+## Security Warning
 
-## Date: August 26, 2024
+The application uses the clipboard to paste transcriptions into the active window. This could potentially be dangerous if you are in a context where text should not be pasted. Always be aware of your active window when using this feature.
 
-### Current Status
+## Requirements
 
-The TranscriptionApp has been successfully refactored and enhanced with several new features. All functionalities are working as intended.
+- Python 3.10 or higher
+- Customtkinter library
+- Other dependencies listed in `requirements.txt`
+- PortAudio library (for Mac users, install via Homebrew)
 
-### Key Features Implemented
+## Installation
 
-1. **Language Toggle:**
-   - Separate hotkey for toggling between English and German
-   - Visual indicator in the UI for current language
-   - Sound feedback for language changes
+1. Clone the repository or download the source code.
+2. Run the installation script by executing: `python install.py`
+   This script will install the required dependencies and create necessary directories.
+3. Set the `TRANSCRIPTION_API_URL` environment variable to the URL of your Whisper API server (optional, defaults to `http://10.68.7.2:8000/v1/audio/transcriptions`).
 
-2. **Configurable Hotkeys:**
-   - User interface for setting custom hotkeys for recording and language toggle
-   - Display of current hotkey settings in the UI
+## Usage
 
-3. **Clipboard Integration:**
-   - Automatic copying of transcribed text to clipboard
-   - Instant pasting of transcribed text using system paste command
+1. Run the application by executing: `python main.py`
+2. Select the desired audio input device from the dropdown menu.
+3. Enter a prompt to guide the transcription process (optional).
+4. Press the record hotkey (default: `Cmd+Ctrl+\``) to start recording.
+5. Press the record hotkey again to stop recording and start the transcription process.
+6. The transcribed text will be automatically copied to the clipboard and optionally pasted into the active window.
+7. Use the language toggle hotkey to switch between the two preset languages.
 
-4. **Enhanced UI:**
-   - Increased window size to accommodate new features
-   - Added frames for language selection and hotkey configuration
+## Customization
 
-5. **Improved Error Handling and Debugging:**
-   - Additional debug print statements throughout the code
+- Hotkeys can be customized in the application's settings menu.
+- The window size and position can be adjusted by modifying the `geometry` parameters in the `TranscriptionApp` class.
+- To add more languages, modify the language selection dropdown contents in the code.
+- To use different languages for the quick toggle, substitute your desired two languages in the code.
+- Custom sounds for activation, deactivation, and language toggles can be added to the assets directory.
 
-6. **Retained Core Functionalities:**
-   - Audio device selection
-   - Start/Stop recording with visual feedback
-   - Window pinning
-   - Transcription display in the app
+## Troubleshooting
 
-### Recent Changes
+- If the application fails to start, ensure that all required dependencies are installed correctly.
+- If you encounter issues with PyAudio, make sure you have PortAudio installed (for Mac users, use Homebrew).
+- If the transcription process fails, check the API URL and make sure the Whisper API server is running and accessible.
+- If the pasting functionality doesn't work as expected, try adjusting the delay between copying and pasting or using alternative methods to paste the text.
 
-1. Implemented separate hotkeys for recording toggle (default: Cmd+Ctrl+`) and language toggle (default: Cmd+Ctrl+/)
-2. Added UI elements for custom hotkey configuration
-3. Integrated clipboard functionality for instant pasting of transcribed text
-4. Updated the process_audio method to use clipboard for text insertion
-5. Refactored keyboard listener setup to use configurable hotkeys
+## Contributing
 
-### Next Steps
+Contributions are welcome! Please submit a pull request or open an issue to discuss any changes or improvements.
 
-1. Conduct thorough testing of all new features, especially under various system conditions
-2. Consider implementing a configuration file to save user preferences (e.g., preferred language, custom hotkeys)
-3. Explore options for supporting additional languages beyond English and German
-4. Investigate potential improvements in transcription accuracy or speed
-5. Consider adding a feature for saving transcription history
+## License
 
-### Open Issues
+This project is licensed under the [MIT License](LICENSE).
 
-None reported at this time. All implemented features are functioning as expected.
+## Disclaimer
 
-### Project Files Status
-
-1. `TranscriptionApp.py`: Up to date with all recent changes and new features
-2. `assets/images/appIcon.ico`: Current
-3. `assets/images/appIcon_recording.ico`: Current
-4. `assets/images/unpinned.png`: Current
-5. `assets/images/pinned.png`: Current
-6. `assets/beep.wav`: Current
-7. `assets/english_toggle.wav`: Current
-8. `assets/german_toggle.wav`: Current
-
-### Dependencies
-
-Ensure all required libraries are installed:
-- customtkinter
-- pynput
-- sounddevice
-- scipy
-- requests
-- pillow
-- pyautogui
-- pyperclip
-
-### Notes
-
-The project has made significant progress with the implementation of user-requested features. The application now offers a more flexible and user-friendly experience with configurable hotkeys and improved language switching capabilities.
+This application is provided "as is" without warranty of any kind, either express or implied. Use at your own risk. The author(s) and contributor(s) are not responsible for any damage or data loss that may occur as a result of using this application.
