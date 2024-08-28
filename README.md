@@ -2,6 +2,8 @@
 
 The Whisper API Transcription App is a Python-based desktop application that allows users to record audio, transcribe it using any OpenAI Whisper API endpoint (including self-hosted options), and automatically copy the transcription to the clipboard and paste it into the active window.
 
+![Screenshot of the application](screenshot_v02.png)
+
 ## Important Notes
 
 - This application requires Python 3.10 or higher.
