@@ -163,6 +163,7 @@ cython_debug/
 
 # Custom additions
 claude-tips/
+old/
 .DS_Store
 *.swp
 *.swo

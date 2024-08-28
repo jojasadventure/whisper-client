@@ -2,6 +2,7 @@ import os
 import customtkinter as ctk
 import threading
 from playsound import playsound
+from pynput import keyboard
 import pyperclip
 import pyautogui
 import signal
@@ -11,9 +12,56 @@ from audio_handler import AudioHandler, get_audio_devices
 from ui_components import UIComponents
 from api_handler import APIHandler
 from emitter import Emitter
-from keyboard_handler import KeyboardHandler
 
+
+# Get API URL from environment variable or use default
 API_URL = os.getenv('TRANSCRIPTION_API_URL', 'http://10.68.7.2:8000/v1/audio/transcriptions')
+
+class KeyboardHandler:
+    def __init__(self, app):
+        self.app = app
+        self.current = set()
+        self.listener = None
+
+    def setup_listener(self):
+        self.RECORD_COMBINATION = self.parse_hotkey(self.app.ui.record_hotkey_var.get())
+        self.LANGUAGE_COMBINATION = self.parse_hotkey(self.app.ui.language_hotkey_var.get())
+        self.listener = keyboard.Listener(on_press=self.on_press, on_release=self.on_release)
+        self.listener.start()
+        print("Debug: Keyboard listener setup complete")
+
+    def parse_hotkey(self, hotkey_str):
+        keys = hotkey_str.split('+')
+        parsed_keys = set()
+        for key in keys:
+            key = key.strip().lower()
+            if key == 'cmd':
+                parsed_keys.add(keyboard.Key.cmd)
+            elif key == 'ctrl':
+                parsed_keys.add(keyboard.Key.ctrl)
+            elif len(key) == 1:
+                parsed_keys.add(keyboard.KeyCode.from_char(key))
+        return parsed_keys
+
+    def on_press(self, key):
+        self.current.add(key)
+        if all(k in self.current for k in self.RECORD_COMBINATION):
+            print("Debug: Record hotkey combination pressed")
+            self.app.master.after(0, self.app.toggle_recording)
+        elif all(k in self.current for k in self.LANGUAGE_COMBINATION):
+            print("Debug: Language toggle hotkey combination pressed")
+            self.app.master.after(0, self.app.toggle_language)
+
+    def on_release(self, key):
+        try:
+            self.current.remove(key)
+        except KeyError:
+            pass
+
+    def update_hotkeys(self):
+        self.RECORD_COMBINATION = self.parse_hotkey(self.app.ui.record_hotkey_var.get())
+        self.LANGUAGE_COMBINATION = self.parse_hotkey(self.app.ui.language_hotkey_var.get())
+        print("Debug: Hotkeys updated")
 
 class RecordingHandler:
     def __init__(self, app):
@@ -72,14 +120,14 @@ class TranscriptionApp:
         self.master = master
         self.master.title("Whisper API Transcription App")
         self.master.iconbitmap('assets/images/appIcon.ico')
-        self.master.geometry("400x650")  # Increase window height
+        self.master.geometry("400x550")  # Increase window height
         self.master.protocol("WM_DELETE_WINDOW", self.on_close)
 
         screen_width = self.master.winfo_screenwidth()
         screen_height = self.master.winfo_screenheight()
         x = (screen_width - 400) // 2
         y = (screen_height - 550) // 2  # Adjust window position
-        self.master.geometry(f"400x650+{x}+{y}")
+        self.master.geometry(f"400x550+{x}+{y}")
 
         self.ui = UIComponents(self.master, self)
         self.api_handler = APIHandler(API_URL)
