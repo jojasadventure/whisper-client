@@ -10,7 +10,7 @@ Screenshot of the application: </p>
 
 ## Important Notes
 
-- set your API after opening the app with config button.
+- set your API after opening the app with config button, the install.py will also ask for it.
 - setting hotkeys doesn't work yet sorry ( :
 - This application requires Python 3.10 or higher.
 - It has only been tested on an older Mac and not on Apple Silicon.
@@ -47,7 +47,7 @@ The application uses the clipboard to paste transcriptions into the active windo
 1. Clone the repository or download the source code.
 2. Run the installation script by executing: `python3 install.py`
    This script will install the required dependencies and create necessary directories.
-3. Edit main.py and set the `TRANSCRIPTION_API_URL`  variable to the URL of your Whisper API server (optional, defaults to `http://10.68.7.2:8000/v1/audio/transcriptions`).  (sorry)
+   It'll ask for the API. That can be changed later too.
 
 ## Usage
 
