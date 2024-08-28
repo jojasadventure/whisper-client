@@ -5,7 +5,7 @@ tl;dr This is my home-brew replacement of macOS dictation for myself.
 The Whisper API Transcription App is a Python-based desktop application that allows users to record audio and  transcribe it using any OpenAI compatible Whisper API endpoint. I run this on <a href="https://github.com/fedirz/faster-whisper-server">fedirz/faster-whisper-server</a>.  It automatically copies the transcription to the clipboard and pastes it into the active window. 
 
 Screenshot of the application: </p>
-<img src="screenshot_v02.png" height="500">
+<img src="screenshot_v02.png" width="400">
 </p>
 
 ## Important Notes
